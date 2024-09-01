@@ -5,26 +5,23 @@ YADM_URL="https://github.com/TheLocehiliosan/yadm/raw/master/yadm"
 GIT_URL="https://github.com/rmenai/dotfiles"
 
 # Dependencies
-if ! command -v apt &> /dev/null
-then
+if ! command -v apt &> /dev/null; then
   echo "apt package manager could not be found. This script only supports apt-based systems."
   exit 1
 fi
 
-if command -v sudo &> /dev/null
-then
-  SUDO="sudo"
-else
-  SUDO=""
-  echo "sudo could not be found. Running commands without sudo."
+if ! command -v sudo &> /dev/null; then
+  echo "sudo could not be found. Installing sudo."
+  apt update
+  apt install -y sudo
 fi
 
-${SUDO} apt update
-${SUDO} apt install -y git unzip
+sudo apt update
+sudo apt install -y git unzip
 
 # Download yadm without sudo, to a temporary location
 echo "Installing yadm..."
-${SUDO} curl -fLo /usr/bin/yadm "$YADM_URL" && ${SUDO} chmod a+x /usr/bin/yadm
+sudo curl -fLo /usr/bin/yadm "$YADM_URL" && sudo chmod a+x /usr/bin/yadm
 
 if [ $? -ne 0 ]; then
   echo "Failed to download yadm. Exiting..."
