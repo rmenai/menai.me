@@ -3,7 +3,7 @@
 # Variables
 TEMP_DIR=$(mktemp -d)
 YADM_URL="https://github.com/TheLocehiliosan/yadm/raw/master/yadm"
-YADM_BIN="yadm"
+YADM_BIN="$TEMP_DIR/yadm"
 
 # Dependencies
 if ! command -v apt &> /dev/null
@@ -25,17 +25,17 @@ ${SUDO} apt install -y git unzip zsh yadm neovim tmux
 
 echo "Installing Oh My Posh..."
 curl -s https://ohmyposh.dev/install.sh | bash -s -- -d /usr/bin
-#
-# # Download yadm without sudo, to a temporary location
-# echo "Downloading yadm to temporary location..."
-# curl -fLo "$YADM_BIN" "$YADM_URL" && chmod a+x "$YADM_BIN"
-#
-# if [ $? -ne 0 ]; then
-#     echo "Failed to download yadm. Exiting..."
-#     exit 1
-# fi
-#
-# echo "yadm downloaded successfully."
+
+# Download yadm without sudo, to a temporary location
+echo "Downloading yadm to temporary location..."
+curl -fLo "$YADM_BIN" "$YADM_URL" && chmod a+x "$YADM_BIN"
+
+if [ $? -ne 0 ]; then
+  echo "Failed to download yadm. Exiting..."
+  exit 1
+fi
+
+echo "yadm downloaded successfully."
 cd "$HOME"
 
 echo "Configuring Git..."
