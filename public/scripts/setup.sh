@@ -6,8 +6,6 @@ curl -L https://nixos.org/nix/install | sh
 nix-channel --add https://github.com/nix-community/home-manager/archive/master.tar.gz home-manager
 nix-channel --update
 
-nix-shell "<home-manager>" -A install
-
 nix-shell -p yadm --run '
   echo "Cloning your dotfiles repository with yadm..."
   cd "$HOME"
@@ -22,6 +20,7 @@ nix-shell -p yadm --run '
   echo "Dotfiles repository cloned successfully."
 '
 
+nix-shell "<home-manager>" -A install
 home-manager switch
 
 echo "Setup completed successfully!"
