@@ -24,7 +24,7 @@ ${SUDO} apt update
 ${SUDO} apt install -y git unzip zsh
 
 echo "Installing Oh My Posh..."
-curl -s https://ohmyposh.dev/install.sh | bash -s
+curl -s https://ohmyposh.dev/install.sh | bash -s -- -d /usr/bin
 
 # Download yadm without sudo, to a temporary location
 echo "Downloading yadm to temporary location..."
