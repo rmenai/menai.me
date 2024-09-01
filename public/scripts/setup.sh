@@ -38,6 +38,22 @@ curl -s https://ohmyposh.dev/install.sh | bash -s -- -d /usr/bin
 # echo "yadm downloaded successfully."
 cd "$HOME"
 
+echo "Configuring Git..."
+git config --global init.defaultBranch main
+git config --global user.name "Rami Menai"
+git config --global user.email "rami@menai.me"
+
+echo "Checking for .profile and .zshrc files..."
+if [ -f "$HOME/.profile" ]; then
+    echo "Removing .profile..."
+    rm "$HOME/.profile"
+fi
+
+if [ -f "$HOME/.zshrc" ]; then
+    echo "Removing .zshrc..."
+    rm "$HOME/.zshrc"
+fi
+
 # Clone your dotfiles repository and initialize submodules
 echo "Cloning your dotfiles repository with yadm..."
 "$YADM_BIN" clone https://github.com/rmenai/dotfiles.git
