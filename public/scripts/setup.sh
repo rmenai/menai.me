@@ -58,4 +58,5 @@ fi
 echo "Dotfiles repository cloned successfully."
 
 echo "Running bootstrap"
+chmod a+x .config/yadm/bootstrap
 yadm bootstrap
