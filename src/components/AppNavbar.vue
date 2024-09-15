@@ -18,7 +18,7 @@ const appConfig = useAppConfig();
       </NuxtLink>
     </div>
     <!-- Social icons & Color Mode -->
-    <div class="space-x-3 transition text-gray-500">
+    <div class="space-x-3 translate-y-1 transition text-gray-500">
       <a
         :href="`https://twitter.com/${appConfig.socials?.twitter}`"
         target="_blank"

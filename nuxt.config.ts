@@ -1,18 +1,19 @@
 export default defineNuxtConfig({
   compatibilityDate: "2024-04-03",
+  devtools: false,
   srcDir: "src/",
   nitro: {
     prerender: {
       autoSubfolderIndex: false,
     },
   },
-  css: ["~/assets/css/main.css"],
   postcss: {
     plugins: {
       tailwindcss: {},
       autoprefixer: {},
     },
   },
+  css: ["~/assets/css/main.css"],
   colorMode: {
     classSuffix: "",
   },
