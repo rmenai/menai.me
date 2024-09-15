@@ -1,6 +1,6 @@
 export default defineNuxtConfig({
   compatibilityDate: "2024-04-03",
-  devtools: false,
+  devtools: { enabled: false },
   srcDir: "src/",
   nitro: {
     prerender: {
