@@ -8,8 +8,8 @@ echo "- Remove some files from your home directory."
 echo "- Change the default shell, which might slow down startup time."
 echo "It is strongly recommended to backup your home directory before proceeding."
 echo ""
-read -p "Do you want to proceed? (Y/n): " -n 1 -r
-echo # Move to a new line
+read -p "Do you want to proceed? (y/N): " -n 1 -r
+echo "" # Move to a new line
 
 # Default to 'no' if no input provided
 if [[ ! $REPLY =~ ^[Yy]$ ]]; then
