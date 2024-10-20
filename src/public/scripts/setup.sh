@@ -2,24 +2,24 @@
 
 GIT_URL="https://github.com/rmenai/dotfiles"
 
-# Warning prompt
-echo "WARNING: This script will perform the following actions:"
-echo "- Remove some files from your home directory."
-echo "- Change the default shell, which might slow down startup time."
-echo "It is strongly recommended to backup your home directory before proceeding."
-echo ""
-read -p "Do you want to proceed? (y/N): " -n 1 -r
-echo "" # Move to a new line
+# Warning prompt (using /dev/tty to ensure it works in non-interactive mode)
+echo "WARNING: This script will perform the following actions:" > /dev/tty
+echo "- Remove some files from your home directory." > /dev/tty
+echo "- Change the default shell, which might slow down startup time." > /dev/tty
+echo "It is strongly recommended to backup your home directory before proceeding." > /dev/tty
+echo "" > /dev/tty
+read -p "Do you want to proceed? (y/N): " -n 1 -r < /dev/tty
+echo "" > /dev/tty # Move to a new line
 
 # Default to 'no' if no input provided
 if [[ ! $REPLY =~ ^[Yy]$ ]]; then
-  echo "Operation cancelled."
+  echo "Operation cancelled." > /dev/tty
   exit 1
 fi
 
 # Make sure sudo is available
-if ! command -v sudo &> /dev/null; then
-  echo "sudo could not be found. Install sudo and try again."
+if ! command -v sudo &> /dev/tty; then
+  echo "sudo could not be found. Install sudo and try again." > /dev/tty
   exit 1
 fi
 
