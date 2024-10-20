@@ -42,5 +42,9 @@ yadm clone $GIT_URL
 yadm checkout $HOME
 yadm submodule update --recursive --init
 
+# Reminder for changing the default shell
+echo "If your default shell did not change, please update /etc/shells and add the following line:" > /dev/tty
+echo "/home/$(whoami)/.nix-profile/bin/zsh" > /dev/tty
+
 # Configure home
 home-manager switch
