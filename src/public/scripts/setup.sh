@@ -2,6 +2,21 @@
 
 GIT_URL="https://github.com/rmenai/dotfiles"
 
+# Warning prompt
+echo "WARNING: This script will perform the following actions:"
+echo "- Remove some files from your home directory."
+echo "- Change the default shell, which might slow down startup time."
+echo "It is strongly recommended to backup your home directory before proceeding."
+echo ""
+read -p "Do you want to proceed? (Y/n): " -n 1 -r
+echo # Move to a new line
+
+# Default to 'no' if no input provided
+if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+  echo "Operation cancelled."
+  exit 1
+fi
+
 # Make sure sudo is available
 if ! command -v sudo &> /dev/null; then
   echo "sudo could not be found. Install sudo and try again."
@@ -21,9 +36,6 @@ nix-shell "<home-manager>" -A install
 
 # Install yadm
 nix-env -iA nixpkgs.yadm
-
-# Move the old config to backup
-sudo cp $HOME -r "$HOME.old"
 
 # Import dotfiles
 yadm clone $GIT_URL
