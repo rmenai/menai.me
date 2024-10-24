@@ -1,19 +1,12 @@
 #!/bin/bash
-
 GIT_URL="https://github.com/rmenai/dotfiles"
+FZF_URL="https://github.com/junegunn/fzf/releases/download/v0.55.0/fzf-0.55.0-linux_amd64.tar.gz"
+ZOXIDE_URL="https://github.com/ajeetdsouza/zoxide/releases/download/v0.9.6/zoxide_0.9.6-1_amd64.deb"
 
-# Warning prompt (using /dev/tty to ensure it works in non-interactive mode)
-echo "WARNING: This script will perform the following actions:" > /dev/tty
-echo "- Remove some files from your home directory." > /dev/tty
-echo "- Change the default shell, which might slow down startup time." > /dev/tty
-echo "It is strongly recommended to backup your home directory before proceeding." > /dev/tty
-echo "" > /dev/tty
-read -p "Do you want to proceed? (y/N): " -n 1 -r < /dev/tty
-echo "" > /dev/tty # Move to a new line
-
-# Default to 'no' if no input provided
-if [[ ! $REPLY =~ ^[Yy]$ ]]; then
-  echo "Operation cancelled." > /dev/tty
+# Check if the script is being run as root
+if [[ $EUID -eq 0 ]]; then
+  echo "ERROR: This script should not be run as root." > /dev/tty
+  echo "Please create a new user in the sudoers group and run the script as that user." > /dev/tty
   exit 1
 fi
 
@@ -23,28 +16,48 @@ if ! command -v sudo &> /dev/tty; then
   exit 1
 fi
 
-# Install nix
-sudo install -d -m755 -o $(id -u) -g $(id -g) /nix
-curl -L https://nixos.org/nix/install | sh
+# Warning prompt (using /dev/tty to ensure it works in non-interactive mode)
+echo "WARNING: This script will perform the following actions:" > /dev/tty
+echo "- Override these dot files: $GIT_URL." > /dev/tty
+echo "- Change the default shell to zsh." > /dev/tty
+echo "It is strongly recommended to backup your home directory before proceeding." > /dev/tty
+echo "" > /dev/tty
+read -p "Do you want to proceed? (y/N): " -n 1 -r < /dev/tty
+echo "" > /dev/tty # Move to a new line
 
-. $HOME/.nix-profile/etc/profile.d/nix.sh
+# Default to "no" if no input provided
+if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+  echo "Operation cancelled." > /dev/tty
+  exit 1
+fi
 
-# Install home-manager
-nix-channel --add https://github.com/nix-community/home-manager/archive/master.tar.gz home-manager
-nix-channel --update
-nix-shell "<home-manager>" -A install
+# Update and add repositories
+sudo apt update
+sudo apt install software-properties-common
+sudo add-repository ppa:neovim-ppa/unstable
+sudo apt update
 
-# Install yadm
-nix-env -iA nixpkgs.yadm
+# Install dependencies
+sudo apt install -y git yadm zsh neovim tmux ripgrep eza
+
+# Install harder dependencies
+curl -L $FZF_URL | tar -xz && sudo mv fzf /usr/local/bin/
+sudo chmod +x /usr/local/bin/fzf
+
+wget -qO zoxide.deb $ZOXIDE_URL
+sudo dpkg -i zoxide.deb
+rm zoxide.deb
+
+# Install WSL specific dependencies
+if grep -qi microsoft /proc/version; then
+  sudo apt install -y wslu
+fi
 
 # Import dotfiles
 yadm clone $GIT_URL
 yadm checkout $HOME
 yadm submodule update --recursive --init
 
-# Reminder for changing the default shell
-echo "If your default shell did not change, please update /etc/shells and add the following line:" > /dev/tty
-echo "/home/$(whoami)/.nix-profile/bin/zsh" > /dev/tty
-
-# Configure home
-home-manager switch
+# Default shell
+sudo chsh -s $(which zsh) $USER
+zsh
