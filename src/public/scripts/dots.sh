@@ -35,7 +35,7 @@ fi
 # Update and add repositories
 sudo apt update
 sudo apt install software-properties-common
-sudo add-repository ppa:neovim-ppa/unstable
+sudo add-apt-repository ppa:neovim-ppa/unstable
 sudo apt update
 
 # Install dependencies
