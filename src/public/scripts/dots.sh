@@ -39,7 +39,7 @@ sudo add-apt-repository ppa:neovim-ppa/unstable
 sudo apt update
 
 # Install dependencies
-sudo apt install -y git yadm zsh neovim tmux ripgrep eza
+sudo apt install -y git yadm zsh neovim tmux ripgrep eza xsel
 
 # Install harder dependencies
 curl -L $FZF_URL | tar -xz && sudo mv fzf /usr/local/bin/
