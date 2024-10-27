@@ -46,7 +46,16 @@ sudo add-apt-repository ppa:neovim-ppa/unstable
 sudo apt update
 
 # Install dependencies
-sudo apt install -y git yadm zsh neovim tmux ripgrep eza xsel bat
+sudo apt install -y git yadm zsh neovim tmux ripgrep xsel bat
+
+if apt-cache search ^exa$ | grep -q "^exa"; then
+  sudo apt install -y exa
+elif apt-cache search ^eza$ | grep -q "^eza"; then
+  sudo apt install -y eza
+else
+  echo "Neither exa nor eza package is available on this system."
+  exit 1
+fi
 
 # Install harder dependencies
 sudo curl -L $FZF_URL | sudo tar -xz && sudo mv fzf /usr/local/bin/
