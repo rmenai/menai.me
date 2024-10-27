@@ -49,33 +49,33 @@ sudo apt update
 sudo apt install -y git yadm zsh neovim tmux ripgrep eza xsel bat
 
 # Install harder dependencies
-curl -L $FZF_URL | tar -xz && sudo mv fzf /usr/local/bin/
+sudo curl -L $FZF_URL | sudo tar -xz && sudo mv fzf /usr/local/bin/
 sudo chmod +x /usr/local/bin/fzf
 
-curl -L $FZF_TMUX_URL -o /usr/local/bin/fzf-tmux
+sudo curl -L $FZF_TMUX_URL -o /usr/local/bin/fzf-tmux
 sudo chmod +x /usr/local/bin/fzf-tmux
 
-wget -qO zoxide.deb $ZOXIDE_URL
+sudo wget -qO zoxide.deb $ZOXIDE_URL
 sudo dpkg -i zoxide.deb
-rm zoxide.deb
+sudo rm zoxide.deb
 
-curl -L $TREESITTER_URL | gzip -d >tree-sitter
+sudo curl -L $TREESITTER_URL | sudo gzip -d >tree-sitter
 sudo chmod +x tree-sitter
 sudo mv tree-sitter /usr/local/bin/
 
 # Install yazi
-wget -qO yazi.zip $YAZI_URL
-unzip -d yazi yazi.zip
+sudo wget -qO yazi.zip $YAZI_URL
+sudo unzip -d yazi yazi.zip
 sudo mv yazi/yazi-x86_64-unknown-linux-gnu/yazi /usr/local/bin/
 sudo chmod +x /usr/local/bin/yazi
-rm -rf yazi yazi.zip
+sudo rm -rf yazi yazi.zip
 
 # Install Sesh
-wget -qO sesh.tar.gz $SESH_URL
-tar -xvzf sesh.tar.gz
+sudo wget -qO sesh.tar.gz $SESH_URL
+sudo tar -xvzf sesh.tar.gz
 sudo mv sesh /usr/local/bin/
 sudo chmod +x /usr/local/bin/sesh
-rm sesh.tar.gz
+sudo rm sesh.tar.gz
 
 sudo ln -s /usr/bin/batcat /usr/local/bin/bat
 bat cache --build
@@ -92,8 +92,9 @@ yadm submodule update --recursive --init
 
 # Default shell
 sudo chsh -s $(which zsh) $USER
-zsh
 
 # Clean up temporary directory
 cd ..
 rm -rf "$TEMP_DIR"
+
+zsh
