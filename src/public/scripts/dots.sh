@@ -94,16 +94,16 @@ if grep -qi microsoft /proc/version; then
   sudo apt install -y wslu
 fi
 
+# Clean up temporary directory
+cd $HOME
+rm -rf "$TEMP_DIR"
+
 # Import dotfiles
 yadm clone $GIT_URL
 yadm checkout $HOME
 yadm submodule update --recursive --init
 
 # Default shell
-sudo chsh -s $(which zsh) $USER
-
-# Clean up temporary directory
-cd ..
-rm -rf "$TEMP_DIR"
+chsh -s $(which zsh) $USER
 
 zsh
