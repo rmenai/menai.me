@@ -87,7 +87,6 @@ sudo chmod +x /usr/local/bin/sesh
 sudo rm sesh.tar.gz
 
 sudo ln -s /usr/bin/batcat /usr/local/bin/bat
-bat cache --build
 
 # Install WSL specific dependencies
 if grep -qi microsoft /proc/version; then
@@ -102,6 +101,8 @@ rm -rf "$TEMP_DIR"
 yadm clone $GIT_URL
 yadm checkout $HOME
 yadm submodule update --recursive --init
+
+bat cache --build
 
 # Default shell
 chsh -s $(which zsh) $USER
