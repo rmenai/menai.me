@@ -22,8 +22,8 @@ fi
 
 # Warning prompt (using /dev/tty to ensure it works in non-interactive mode)
 echo "WARNING: This script will perform the following actions:" >/dev/tty
-echo "- Override these dot files: $GIT_URL." >/dev/tty
-echo "- Change the default shell to zsh." >/dev/tty
+echo " Override these dot files: $GIT_URL." >/dev/tty
+echo " Install a lot of packages" >/dev/tty
 echo "It is strongly recommended to backup your home directory before proceeding." >/dev/tty
 echo "" >/dev/tty
 read -p "Do you want to proceed? (y/N): " -n 1 -r </dev/tty
@@ -104,7 +104,7 @@ yadm submodule update --recursive --init
 
 bat cache --build
 
-# Default shell
-chsh -s $(which zsh) $USER
-
+echo "Please run the following command to make Zsh your default shell:"
+echo "  chsh -s \$(which zsh)"
+echo "Note: You may need to log out and back in for the change to take effect."
 zsh
