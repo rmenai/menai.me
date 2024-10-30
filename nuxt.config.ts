@@ -14,18 +14,14 @@ export default defineNuxtConfig({
     },
   },
   css: ["~/assets/css/tailwind.css"],
-  colorMode: {
-    classSuffix: "",
-  },
   content: {
     documentDriven: true,
     highlight: {
       langs: ["py", "c", "bash"],
       theme: {
-        dark: "github-dark",
-        default: "github-light",
+        default: "catppuccin-mocha",
       },
     },
   },
-  modules: ["@nuxt/content", "@nuxt/icon", "@nuxtjs/color-mode", "@nuxt/image"],
+  modules: ["@nuxt/content", "@nuxt/icon"],
 });

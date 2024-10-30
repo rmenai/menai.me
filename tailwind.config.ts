@@ -13,5 +13,10 @@ export default {
       },
     },
   },
-  plugins: [typography()],
+  plugins: [
+    typography(),
+    require("@catppuccin/tailwindcss")({
+      defaultFlavour: "mocha",
+    }),
+  ],
 } satisfies Config;
