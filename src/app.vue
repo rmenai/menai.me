@@ -1,5 +1,11 @@
 <script setup lang="ts">
 const appConfig = useAppConfig();
+
+useHead({
+  htmlAttrs: {
+    lang: "en",
+  },
+});
 </script>
 
 <template>
