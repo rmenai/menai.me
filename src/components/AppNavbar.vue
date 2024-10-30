@@ -1,17 +1,16 @@
-<script lang="ts" setup>
+<script setup lang="ts">
 const { navigation } = useContent();
 const appConfig = useAppConfig();
 </script>
 
 <template>
   <div class="flex justify-between max-w-2xl px-4 py-4 mx-auto sm:px-8">
-    <!-- Navigation -->
     <div class="text-text">
       <NuxtLink v-for="link of navigation" :key="link._path" :to="link._path" active-class="font-bold" class="mr-6">
         {{ link.title }}
       </NuxtLink>
     </div>
-    <!-- Social icons & Color Mode -->
+
     <div class="space-x-3 translate-y-1 transition">
       <a :href="`https://twitter.com/${appConfig.socials?.twitter}`" target="_blank" title="Twitter" class="text-text hover:text-lavender">
         <Icon name="simple-icons:twitter" class="w-5 h-5" />
