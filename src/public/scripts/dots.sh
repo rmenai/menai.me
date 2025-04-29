@@ -30,6 +30,7 @@ This will:
   4. Clone or update $DOTFILES_DIR
   5. Use GNU Stow to symlink your dotfiles
   6. Run 'home-manager switch'
+  7. Source ~/.profile to load your new environment
 
 EOF
 
@@ -69,14 +70,10 @@ else
   git clone "$DOTFILES_REPO" "$DOTFILES_DIR"
 fi
 
-# Symlink with stow (uses your .stowrc)
-echo "Symlinking dotfiles via stow..."
-cd "$DOTFILES_DIR"
-stow .
-cd - >/dev/null
-
 # Apply Nix/home-manager configuration
 echo "Applying home-manager configuration..."
 home-manager switch
 
+echo "Sourcing ~/.profile to finalize environment setup..."
+. "$HOME/.profile"
 echo "✅ Bootstrap complete!"
