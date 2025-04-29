@@ -1,11 +1,7 @@
-#!/bin/bash
-GIT_URL="https://github.com/rmenai/dotfiles"
-FZF_URL="https://github.com/junegunn/fzf/releases/download/v0.55.0/fzf-0.55.0-linux_amd64.tar.gz"
-FZF_TMUX_URL="https://raw.githubusercontent.com/junegunn/fzf/master/bin/fzf-tmux"
-ZOXIDE_URL="https://github.com/ajeetdsouza/zoxide/releases/download/v0.9.6/zoxide_0.9.6-1_amd64.deb"
-TREESITTER_URL="https://github.com/tree-sitter/tree-sitter/releases/download/v0.24.3/tree-sitter-linux-x64.gz"
-YAZI_URL="https://github.com/sxyazi/yazi/releases/download/v0.3.3/yazi-x86_64-unknown-linux-gnu.zip"
-SESH_URL="https://github.com/joshmedeski/sesh/releases/download/v2.6.0/sesh_Linux_x86_64.tar.gz"
+#!/usr/bin/env bash
+
+DOTFILES_REPO="https://github.com/rmenai/dotfiles"
+DOTFILES_DIR="$HOME/.dotfiles"
 
 # Check if the script is being run as root
 if [[ $EUID -eq 0 ]]; then
@@ -21,13 +17,20 @@ if ! command -v sudo &>/dev/tty; then
 fi
 
 # Warning prompt (using /dev/tty to ensure it works in non-interactive mode)
-echo "WARNING: This script will perform the following actions:" >/dev/tty
-echo " Override these dot files: $GIT_URL." >/dev/tty
-echo " Install a lot of packages" >/dev/tty
-echo "It is strongly recommended to backup your home directory before proceeding." >/dev/tty
+echo "================================================" >/dev/tty
+echo "           Dotfiles Installation Script         " >/dev/tty
+echo "================================================" >/dev/tty
 echo "" >/dev/tty
-read -p "Do you want to proceed? (y/N): " -n 1 -r </dev/tty
-echo "" >/dev/tty # Move to a new line
+echo "WARNING: This script will do the following steps:" >/dev/tty
+echo "" > /dev/tty
+echo "  1. Install Nix (single-user, --daemon) if not already present." >/dev/tty
+echo "  2. Set up Home-manager for your user." >/dev/tty
+echo "  3. Clone your dotfiles repository '$DOTFILES_DIR'." >/dev/tty
+echo "  4. Use GNU Stow to create symlinks to your dotfiles." >/dev/tty
+echo "  6. Run 'home-manager switch' to apply your Nix configuration, install packages, etc..." >/dev/tty
+echo "" >/dev/tty
+echo "It is strongly recommended to backup your dotfiles before proceeding." >/dev/tty
+echo "" >/dev/tty
 
 # Default to "no" if no input provided
 if [[ ! $REPLY =~ ^[Yy]$ ]]; then
@@ -35,76 +38,38 @@ if [[ ! $REPLY =~ ^[Yy]$ ]]; then
   exit 1
 fi
 
-# Create a temporary directory
-TEMP_DIR=$(mktemp -d)
-cd "$TEMP_DIR" || exit
+# Make sure Nix is available
+if ! command -v nix &>/dev/null; then
+  echo "Nix package manager not found." >/dev/tty
+  echo "Attempting to install Nix: sh <(curl -L https://nixos.org/nix/install)" >/dev/tty
+  sh <(curl -L https://nixos.org/nix/install) --daemon
+fi
 
-# Update and add repositories
-sudo apt update
-sudo apt install software-properties-common
-sudo add-apt-repository ppa:neovim-ppa/unstable
-sudo apt update
+# Installing home-manager
+echo "Adding/updating home-manager channel..." >/dev/tty
+nix-channel --add https://github.com/nix-community/home-manager/archive/master.tar.gz home-manager
+nix-channel --update
+nix-shell '<home-manager>' -A install
 
-# Install dependencies
-sudo apt install -y git yadm zsh neovim tmux ripgrep xsel bat
-
-if apt-cache search ^exa$ | grep -q "^exa"; then
-  sudo apt install -y exa
-elif apt-cache search ^eza$ | grep -q "^eza"; then
-  sudo apt install -y eza
+# Cloning dotfiles
+if [ -d "$DOTFILES_DIR" ]; then
+  echo "Dotfiles directory '$DOTFILES_DIR' already exists. Skipping clone." >/dev/tty
+  echo "Make sure it contains your dotfiles and the '$HOME_NIX_RELATIVE_PATH'." >/dev/tty
+  echo "Attempting to pull latest changes in $DOTFILES_DIR..." >/dev/tty
+  git -C "$DOTFILES_DIR" pull
 else
-  echo "Neither exa nor eza package is available on this system."
-  exit 1
+  echo "Cloning dotfiles repository to '$DOTFILES_DIR'..." >/dev/tty
+  git clone "$DOTFILES_REPO" "$DOTFILES_DIR"
+  echo "Cloning complete." >/dev/tty
 fi
 
-# Install harder dependencies
-sudo curl -L $FZF_URL | sudo tar -xz && sudo mv fzf /usr/local/bin/
-sudo chmod +x /usr/local/bin/fzf
+# Creating symlinks
+echo "Running stow to create symlinks from ~/.dotfiles..." >/dev/tty
+cd "$DOTFILES_DIR" || exit
+nix run nixpkgs#stow -- .
+cd - > /dev/null || exit
 
-sudo curl -L $FZF_TMUX_URL -o /usr/local/bin/fzf-tmux
-sudo chmod +x /usr/local/bin/fzf-tmux
-
-sudo wget -qO zoxide.deb $ZOXIDE_URL
-sudo dpkg -i zoxide.deb
-sudo rm zoxide.deb
-
-sudo curl -L $TREESITTER_URL | sudo gzip -d >tree-sitter
-sudo chmod +x tree-sitter
-sudo mv tree-sitter /usr/local/bin/
-
-# Install yazi
-sudo wget -qO yazi.zip $YAZI_URL
-sudo unzip -d yazi yazi.zip
-sudo mv yazi/yazi-x86_64-unknown-linux-gnu/yazi /usr/local/bin/
-sudo chmod +x /usr/local/bin/yazi
-sudo rm -rf yazi yazi.zip
-
-# Install Sesh
-sudo wget -qO sesh.tar.gz $SESH_URL
-sudo tar -xvzf sesh.tar.gz
-sudo mv sesh /usr/local/bin/
-sudo chmod +x /usr/local/bin/sesh
-sudo rm sesh.tar.gz
-
-sudo ln -s /usr/bin/batcat /usr/local/bin/bat
-
-# Install WSL specific dependencies
-if grep -qi microsoft /proc/version; then
-  sudo apt install -y wslu
-fi
-
-# Clean up temporary directory
-cd $HOME
-rm -rf "$TEMP_DIR"
-
-# Import dotfiles
-yadm clone $GIT_URL
-yadm checkout $HOME
-yadm submodule update --recursive --init
-
-bat cache --build
-
-echo "Please run the following command to make Zsh your default shell:"
-echo "  chsh -s \$(which zsh)"
-echo "Note: You may need to log out and back in for the change to take effect."
-zsh
+# Switch home-manager
+home-manager switch
+echo "" >/dev/tty
+echo "Setup complete. Packages are installed and dotfiles linked." >/dev/tty
