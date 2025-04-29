@@ -45,7 +45,7 @@ fi
 # Install Nix if needed
 if ! command -v nix &>/dev/null; then
   echo "Installing Nix (requires sudo)..."
-  sudo sh <(curl -L https://nixos.org/nix/install) --daemon
+  sh <(curl -L https://nixos.org/nix/install) --daemon
 
   # Make nix command available immediately
   if [[ -f /etc/profile.d/nix.sh ]]; then
