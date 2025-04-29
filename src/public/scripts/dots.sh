@@ -72,7 +72,7 @@ fi
 
 # Apply Nix/home-manager configuration
 echo "Applying home-manager configuration..."
-home-manager switch
+home-manager switch --flake ~/.dotfiles/nixos#rami@$(hostname)
 
 echo "Sourcing ~/.profile to finalize environment setup..."
 . "$HOME/.profile"
