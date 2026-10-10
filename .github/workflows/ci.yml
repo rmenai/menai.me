@@ -1,0 +1,42 @@
+name: CI Checks
+
+on:
+  pull_request:
+    branches: ['main']
+  push:
+    branches: ['main']
+
+jobs:
+  validate:
+    name: Code Validation
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: devenv shell -- bash -e {0}
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: cachix/install-nix-action@v31
+
+      - uses: cachix/cachix-action@v17
+        with:
+          name: devenv
+
+      - name: Install devenv.sh
+        shell: bash
+        run: nix profile add nixpkgs#devenv
+
+      - name: Check Formatting
+        run: bun run format --check
+
+      - name: Run Linter
+        run: bun run lint
+
+      - name: Run Unit Tests
+        run: bun run test:unit -- --run
+
+      - name: Run E2E Tests
+        run: bun run test:e2e
+
+      - name: Test Build
+        run: bun run build
