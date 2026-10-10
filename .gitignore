@@ -27,6 +27,9 @@ test-results
 src/lib/paraglide
 project.inlang/cache/
 
+# Wrangler
+worker-configuration.d.ts
+
 # Devenv
 .devenv*
 devenv.local.nix
