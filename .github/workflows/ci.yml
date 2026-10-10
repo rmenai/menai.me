@@ -1,4 +1,4 @@
-name: CI Checks
+name: Tests & Checks
 
 on:
   pull_request:
@@ -7,8 +7,8 @@ on:
     branches: ['main']
 
 jobs:
-  validate:
-    name: Code Validation
+  verify:
+    name: Verify
     runs-on: ubuntu-latest
     defaults:
       run:
